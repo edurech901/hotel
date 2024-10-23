@@ -30,7 +30,7 @@ public class Hotel {
 
     List<Quarto> quartos = quartos();
     List<Reserva> reservas = new ArrayList<>();
-    reservas.add(new Reserva("Eduardo", new Date(2024, 10, 10), new Date(2024, 10, 26), quartos));
+    reservas.add(new Reserva("Eduardo", new Date(2024, 10, 10), new Date(24, 10, 26), quartos));
 
     while (true) {
       Scanner scan = new Scanner(System.in);
@@ -40,6 +40,8 @@ public class Hotel {
       System.out.println("2  -- Lista de quartos");
       System.out.println("3  -- Fazer reserva");
       System.out.println("4  -- Lista de reservas");
+      System.out.println("5  -- Fazer check-in");
+      System.out.println("6  -- Fazer check-out");
       System.out.println("0  -- Sair\n");
       System.out.println("Escolha a opção:");
       op = scan.nextInt();
@@ -115,6 +117,23 @@ public class Hotel {
         case 4 -> {
           for (Reserva a : reservas)
             a.printar_reserva();
+        }
+        case 5 -> {
+          String nome_hospede;
+          System.out.println("Digite o nome da reserva: ");
+          nome_hospede = scan.next();
+          for(Reserva a: reservas){
+            if(a.getNome_hospede().contains(nome_hospede)){
+              List<Quarto> quartos_reserva = a.getQuartos();
+              for(Quarto x : quartos_reserva){
+                for(Quarto y : quartos){
+                  if(x.getNum_quarto() == y.num_quarto){
+                    y.mudar_ocupado();
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
