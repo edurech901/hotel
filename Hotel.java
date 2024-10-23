@@ -124,11 +124,34 @@ public class Hotel {
           nome_hospede = scan.next();
           for (Reserva a : reservas) {
             if (a.getNome_hospede().equals(nome_hospede)) {
+              System.out.println("Reserva:");
+              a.printar_reserva();
+              System.out.println("Check-in feito com sucesso");
               List<Quarto> quartos_reserva = a.getQuartos();
               for (Quarto x : quartos_reserva) {
                 for (Quarto y : quartos) {
                   if (x.getNum_quarto() == y.num_quarto) {
                     y.mudar_ocupado();
+                  }
+                }
+              }
+            }
+          }
+        }
+        case 6 -> {
+          String nome_hospede;
+          System.out.println("Digite o nome da reserva: ");
+          nome_hospede = scan.next();
+          for (Reserva a : reservas) {
+            if (a.getNome_hospede().equals(nome_hospede)) {
+              System.out.println("Reserva:");
+              a.printar_reserva();
+              System.out.println("Check-out feito com sucesso");
+              List<Quarto> quartos_reserva = a.getQuartos();
+              for (Quarto x : quartos_reserva) {
+                for (Quarto y : quartos) {
+                  if (x.getNum_quarto() == y.num_quarto) {
+                    y.mudar_livre();
                   }
                 }
               }

@@ -49,8 +49,8 @@ public class Reserva {
   public void printar_reserva() {
     System.out.println("\nNome do hospede: " + nome_hospede);
     System.out.println("Periodo: ");
-    System.out.println(checkin.getDate() + "/" + checkin.getMonth() + "/" + checkin.getYear() + " - "
-        + checkout.getDate() + "/" + checkout.getMonth() + "/" + checkout.getYear());
+    System.out.println(checkin.getDate() + "/" + checkin.getMonth()+1 + "/" + checkin.getYear() + " - "
+        + checkout.getDate() + "/" + checkout.getMonth()+1 + "/" + checkout.getYear());
     System.out.println("Quartos reservados:");
     for (Quarto a : this.quartos) {
       System.out.println("  Numero do quarto: " + a.getNum_quarto());
