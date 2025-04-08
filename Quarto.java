@@ -3,6 +3,7 @@ public class Quarto {
   int tipo_quarto;
   double preco;
   boolean disponibilidade;
+  
 
   public Quarto(int num_quarto, int tipo_quarto) {
     this.num_quarto = num_quarto;
@@ -53,7 +54,7 @@ public class Quarto {
     switch (tipo_quarto) {
       case 1 -> System.out.println("Solteiro - R$200,00");
       case 2 -> System.out.println("Casal - R$350,00");
-      case 3 -> System.out.println("Casal + Solteiro - R$500,00");
+      case 3 -> System.out.println("Casal e Solteiro - R$500,00");
     }
     if(disponibilidade) System.out.println("Ocupado");
     else System.out.println("Disponivel");

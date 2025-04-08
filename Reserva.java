@@ -1,12 +1,13 @@
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class Reserva {
   String nome_hospede;
-  Date checkin, checkout;
+  LocalDate checkin, checkout;
   List<Quarto> quartos;
 
-  Reserva(String nome_hospede, Date checkin, Date checkout, List<Quarto> quartos) {
+  Reserva(String nome_hospede, LocalDate checkin, LocalDate checkout, List<Quarto> quartos) {
     this.nome_hospede = nome_hospede;
     this.checkin = checkin;
     this.checkout = checkout;
@@ -21,19 +22,19 @@ public class Reserva {
     this.nome_hospede = nome_hospede;
   }
 
-  public Date getCheckout() {
+  public LocalDate getCheckout() {
     return checkout;
   }
 
-  public void setCheckout(Date checkout) {
+  public void setCheckout(LocalDate checkout) {
     this.checkout = checkout;
   }
 
-  public Date getCheckin() {
+  public LocalDate getCheckin() {
     return checkin;
   }
 
-  public void setCheckin(Date checkin) {
+  public void setCheckin(LocalDate checkin) {
     this.checkin = checkin;
   }
 
@@ -45,12 +46,15 @@ public class Reserva {
     this.quartos = quartos;
   }
 
-  @SuppressWarnings("deprecation")
   public void printar_reserva() {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     System.out.println("\nNome do hospede: " + nome_hospede);
     System.out.println("Periodo: ");
-    System.out.println(checkin.getDate() + "/" + checkin.getMonth()+1 + "/" + checkin.getYear() + " - "
-        + checkout.getDate() + "/" + checkout.getMonth()+1 + "/" + checkout.getYear());
+    /*System.out.println(checkin.getDate() + "/" + checkin.getMonth()+1 + "/" + checkin.getYear() + " - "
+        + checkout.getDate() + "/" + checkout.getMonth()+1 + "/" + checkout.getYear());*/
+    System.out.println(checkin.format(formatter) + " - "
+        + checkout.format(formatter));
+
     System.out.println("Quartos reservados:");
     for (Quarto a : this.quartos) {
       System.out.println("  Numero do quarto: " + a.getNum_quarto());
