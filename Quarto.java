@@ -32,7 +32,7 @@ public class Quarto {
     this.tipo_quarto = tipo_quarto;
   }
 
-  public boolean isDisponibilidade() {
+  public boolean getDisponibilidade() {
     return disponibilidade;
   }
 
@@ -50,14 +50,18 @@ public class Quarto {
 
   public void printar_quarto() {
     System.out.println("\nNumero do quarto: " + num_quarto);
-    System.out.println("Tipo do quarto: ");
     switch (tipo_quarto) {
-      case 1 -> System.out.println("Solteiro - R$200,00");
-      case 2 -> System.out.println("Casal - R$350,00");
-      case 3 -> System.out.println("Casal e Solteiro - R$500,00");
+      case 1 -> System.out.println("Tipo do quarto: Solteiro\nDiaria: R$200,00");
+      case 2 -> System.out.println("Tipo do quarto: Casal\nDiaria: R$350,00");
+      case 3 -> System.out.println("Tipo do quarto: Casal e Solteiro\nDiaria: R$500,00");
     }
-    if(disponibilidade) System.out.println("Ocupado");
-    else System.out.println("Disponivel");
+  }
+
+  public void mostrar_disponibilidade() {
+    if (disponibilidade)
+      System.out.println("Quarto ocupado.");
+    else
+      System.out.println("Quarto livre.");
   }
 
   public void mudar_livre(){

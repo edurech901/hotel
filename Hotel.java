@@ -26,7 +26,7 @@ public class Hotel {
     return false;
   }
 
-    public static LocalDate formata_data(String dataStr) {
+  public static LocalDate formata_data(String dataStr) {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -39,6 +39,13 @@ public class Hotel {
     return null;
   }
 
+  public static void printar_quarto_livres() {
+    System.out.println("Quartos disponiveis:");
+    for (Quarto a : quartos()) {
+      if (!a.getDisponibilidade())
+        a.printar_quarto();
+    }
+  }
 
   public static void main(String[] args) {
 
@@ -90,44 +97,43 @@ public class Hotel {
         case 3 -> {
           String nome_hospede, dataStr;
           LocalDate checkin, checkout;
-          List<Quarto> quartos_reservados = new ArrayList<>();
           System.out.println("Digite o nome da reserva: ");
+          Quarto reservado = null;
           nome_hospede = scan.next();
-          while (true) { 
+          while (true) {
             System.out.println("Digite a data do check-in: ");
             dataStr = scan.next();
-            checkin = formata_data(dataStr); 
+            checkin = formata_data(dataStr);
             if (checkin != null)
               break;
           }
-          while (true) { 
+          while (true) {
             System.out.println("Digite a data do check-outn: ");
             dataStr = scan.next();
-            checkout = formata_data(dataStr); 
+            checkout = formata_data(dataStr);
             if (checkout != null)
               break;
           }
           while (true) {
+            printar_quarto_livres();
             int num_quarto;
-            System.out.println("Digite o numero do quarto:");
+            System.out.println("\nDigite o numero do quarto:");
             num_quarto = scan.nextInt();
-            if (num_quarto == 0 && !quartos_reservados.isEmpty())
-              break;
-            else if (num_quarto == 0 && quartos_reservados.isEmpty()) 
-              System.out.println("Ainda não foram adicionados quartos a reserva");
-            else if (encontrar_num_quarto(quartos, num_quarto)) {
-              for (Quarto a : quartos) {
-                if (a.getNum_quarto() == num_quarto) {
+            for (Quarto a : quartos) {
+              if (a.getNum_quarto() == num_quarto) {
+                if (a.getDisponibilidade() == false) {
+                  reservado = a;
                   System.out.println("Quarto " + num_quarto + " reservado");
-                  quartos_reservados.add(a);
-                  break;
-                }
+                } else
+                  System.out.println("Quarto ocupado");
               }
             }
-            else if (!encontrar_num_quarto(quartos, num_quarto)) 
-              System.out.println("O numero do quarto eh invalido");
+            if (reservado != null)
+              break;
+            else
+              System.out.println("Quarto nao encontrado");
           }
-          reservas.add(new Reserva(nome_hospede, checkin, checkout, quartos_reservados));
+          reservas.add(new Reserva(nome_hospede, checkin, checkout, reservado));
         }
         case 4 -> {
           for (Reserva a : reservas)
@@ -142,12 +148,9 @@ public class Hotel {
               System.out.println("Reserva:");
               a.printar_reserva();
               System.out.println("Check-in feito com sucesso");
-              List<Quarto> quartos_reserva = a.getQuartos();
-              for (Quarto x : quartos_reserva) {
-                for (Quarto y : quartos) {
-                  if (x.getNum_quarto() == y.num_quarto) {
-                    y.mudar_ocupado();
-                  }
+              for (Quarto x : quartos) {
+                if (x.getNum_quarto() == a.getQuarto().getNum_quarto()) {
+                  x.mudar_ocupado();
                 }
               }
             }
@@ -162,12 +165,9 @@ public class Hotel {
               System.out.println("Reserva:");
               a.printar_reserva();
               System.out.println("Check-out feito com sucesso");
-              List<Quarto> quartos_reserva = a.getQuartos();
-              for (Quarto x : quartos_reserva) {
-                for (Quarto y : quartos) {
-                  if (x.getNum_quarto() == y.num_quarto) {
-                    y.mudar_livre();
-                  }
+              for (Quarto x : quartos) {
+                if (x.getNum_quarto() == a.getQuarto().getNum_quarto()) {
+                  x.mudar_livre();
                 }
               }
             }

@@ -1,17 +1,16 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 public class Reserva {
   String nome_hospede;
   LocalDate checkin, checkout;
-  List<Quarto> quartos;
+  Quarto reservado;
 
-  Reserva(String nome_hospede, LocalDate checkin, LocalDate checkout, List<Quarto> quartos) {
+  Reserva(String nome_hospede, LocalDate checkin, LocalDate checkout, Quarto reservado) {
     this.nome_hospede = nome_hospede;
     this.checkin = checkin;
     this.checkout = checkout;
-    this.quartos = quartos;
+    this.reservado = reservado;
   }
 
   public String getNome_hospede() {
@@ -38,33 +37,23 @@ public class Reserva {
     this.checkin = checkin;
   }
 
-  public List<Quarto> getQuartos() {
-    return quartos;
+  public Quarto getQuarto() {
+    return reservado;
   }
 
-  public void setQuartos(List<Quarto> quartos) {
-    this.quartos = quartos;
+  public void setQuarto(Quarto quarto) {
+    this.reservado = quarto;
   }
 
   public void printar_reserva() {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     System.out.println("\nNome do hospede: " + nome_hospede);
     System.out.println("Periodo: ");
-    /*System.out.println(checkin.getDate() + "/" + checkin.getMonth()+1 + "/" + checkin.getYear() + " - "
-        + checkout.getDate() + "/" + checkout.getMonth()+1 + "/" + checkout.getYear());*/
     System.out.println(checkin.format(formatter) + " - "
         + checkout.format(formatter));
 
     System.out.println("Quartos reservados:");
-    for (Quarto a : this.quartos) {
-      System.out.println("  Numero do quarto: " + a.getNum_quarto());
-      System.out.println("  Tipo do quarto: ");
-      switch (a.getTipo_quarto()) {
-        case 1 -> System.out.println("  Solteiro - R$200,00");
-        case 2 -> System.out.println("  Casal - R$350,00");
-        case 3 -> System.out.println("  Casal + Solteiro - R$500,00");
-      }
-    System.out.println("-----------------------");
+    reservado.printar_quarto();
     }
-  }
+  
 }
