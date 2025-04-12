@@ -1,8 +1,8 @@
 public class Quarto {
-  int num_quarto;
-  int tipo_quarto;
-  double preco;
-  boolean disponibilidade;
+  private int num_quarto;
+  private int tipo_quarto;
+  private double preco;
+  private boolean disponibilidade;
   
 
   public Quarto(int num_quarto, int tipo_quarto) {
@@ -49,7 +49,7 @@ public class Quarto {
   }
 
   public void printar_quarto() {
-    System.out.println("\nNumero do quarto: " + num_quarto);
+    System.out.println("Numero do quarto: " + num_quarto);
     switch (tipo_quarto) {
       case 1 -> System.out.println("Tipo do quarto: Solteiro\nDiaria: R$200,00");
       case 2 -> System.out.println("Tipo do quarto: Casal\nDiaria: R$350,00");

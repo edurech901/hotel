@@ -2,15 +2,20 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class Reserva {
-  String nome_hospede;
-  LocalDate checkin, checkout;
-  Quarto reservado;
+  private String nome_hospede;
+  private LocalDate checkin, checkout;
+  private Quarto reservado;
+  private double total;
 
   Reserva(String nome_hospede, LocalDate checkin, LocalDate checkout, Quarto reservado) {
     this.nome_hospede = nome_hospede;
     this.checkin = checkin;
     this.checkout = checkout;
     this.reservado = reservado;
+    if (checkout.isEqual(checkin))
+      this.total = reservado.getPreco();
+    else
+      this.total = reservado.getPreco() * (checkout.toEpochDay() - checkin.toEpochDay());
   }
 
   public String getNome_hospede() {
@@ -45,6 +50,14 @@ public class Reserva {
     this.reservado = quarto;
   }
 
+  public double getTotal() {
+    return total;
+  }
+
+  public void setTotal(double total) {
+    this.total = total;
+  }
+
   public void printar_reserva() {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     System.out.println("\nNome do hospede: " + nome_hospede);
@@ -52,8 +65,9 @@ public class Reserva {
     System.out.println(checkin.format(formatter) + " - "
         + checkout.format(formatter));
 
-    System.out.println("Quartos reservados:");
+    System.out.println("Quarto reservado:");
     reservado.printar_quarto();
-    }
-  
+    System.out.println("Total: R$" + total);
+  }
+
 }
