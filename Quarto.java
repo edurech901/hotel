@@ -49,6 +49,7 @@ public class Quarto {
   }
 
   public void printar_quarto() {
+    System.out.println("-------- QUARTO --------");
     System.out.println("Numero do quarto: " + num_quarto);
     switch (tipo_quarto) {
       case 1 -> System.out.println("Tipo do quarto: Solteiro\nDiaria: R$200,00");

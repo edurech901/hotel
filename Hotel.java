@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Hotel {
-
   public static List<Quarto> quartos() {
     List<Quarto> quartos = new ArrayList<>();
 
@@ -38,7 +37,7 @@ public class Hotel {
   }
 
   public static boolean conflito_datas(LocalDate entrada, LocalDate saida, LocalDate checkin, LocalDate checkout) {
-    return !(saida.isBefore(checkin) || entrada.isAfter(checkout));
+    return (entrada.isBefore(checkout) && saida.isAfter(checkin));
   }
 
   public static List<Quarto> quartos_livres(List<Quarto> quartos, List<Reserva> reservas, LocalDate entrada,
@@ -100,6 +99,15 @@ public class Hotel {
                                                                      // testar a função de checkout
   }
 
+  public static Reserva buscar_reserva_hoje(List<Reserva> reservas, String nome_hospede) {
+    for (Reserva a : reservas) {
+      if (a.getHospede().getNome().contains(nome_hospede) && a.getCheckin().isEqual(LocalDate.now())) {
+        return a;
+      }
+    }
+    return null;
+  }
+
   public static void main(String[] args) {
 
     List<Quarto> quartos = quartos();
@@ -124,7 +132,7 @@ public class Hotel {
         System.err.println("Opção inválida!");
         continue;
       }
-      switch (op) {
+      OUTER: switch (op) {
         default ->
           System.err.println("Opção inválida!");
         case 0 -> {
@@ -161,6 +169,7 @@ public class Hotel {
           System.out.println("Digite o nome da reserva: ");
           List<Quarto> quartos_livres;
           nome_hospede = scan.next();
+          Hospede hospede = new Hospede(nome_hospede);
           while (true) {
             System.out.println("Digite a data do check-in: ");
             dataStr = scan.next();
@@ -190,53 +199,70 @@ public class Hotel {
               break;
             }
             tipos = tipos_quartos_livres(quartos_livres);
-            tipo_quarto = scan.nextInt();
+            try {
+              tipo_quarto = Integer.parseInt(scan.next());
+            } catch (NumberFormatException e) {
+              System.out.println("Entrada inválida.");
+              continue;
+            }
             if (!tipos.contains(tipo_quarto)) {
               System.out.println("Opção invalida");
               continue;
             }
             reservas
-                .add(new Reserva(nome_hospede, checkin, checkout, seletor_quartos_livres(quartos_livres, tipo_quarto)));
+                .add(new Reserva(hospede, checkin, checkout, seletor_quartos_livres(quartos_livres, tipo_quarto)));
+            System.out.println("Reserva feita com sucesso");
             break;
           }
         }
         case 4 -> {
-          for (Reserva a : reservas)
+          for (Reserva a : reservas) {
             a.printar_reserva();
+            System.out.println();
+          }
         }
         case 5 -> {
           String nome_hospede;
           System.out.println("Digite o nome da reserva: ");
           nome_hospede = scan.next();
-          for (Reserva a : reservas) {
-            if (a.getNome_hospede().equals(nome_hospede)) {
-              System.out.println("Reserva:");
-              a.printar_reserva();
-              System.out.println("Check-in feito com sucesso");
-              for (Quarto x : quartos) {
-                if (x.getNum_quarto() == a.getQuarto().getNum_quarto()) {
-                  x.mudar_ocupado();
-                }
-              }
+          Reserva reserva = buscar_reserva_hoje(reservas, nome_hospede);
+          if (reserva == null) {
+            System.out.println("Reserva não encontrada.");
+            break;
+          }
+          Hospede hospede = reserva.getHospede(); // pega o real
+          if (!hospede.getCadastrado()) {
+            System.out.println("Finalize o cadastro:");
+            System.out.print("CPF: ");
+            String cpf = scan.next();
+            System.out.print("Telefone: ");
+            String tel = scan.next();
+            System.out.print("Email: ");
+            String email = scan.next();
+
+            hospede.finalizar_cadastro(cpf, tel, email);
+            System.out.println("Cadastro finalizado!");
+          }
+          else {
+            System.out.println("Hospede ja cadastrado");
+            hospede.printar_hospede();
+          }
+          System.out.println("Deseja realizar o check-in? (S/N)");
+          String check = scan.next();
+          switch (check.toUpperCase()) {
+            case "S" -> {
+              reserva.setStatus(1);
+              System.out.println("Check-in realizado com sucesso");
+              System.out.println("Quarto: " + reserva.getQuarto().getNum_quarto());
             }
+            case "N" -> {
+              break OUTER;
+            }
+            default -> System.out.println("Opção inválida");
           }
         }
         case 6 -> {
-          String nome_hospede;
-          System.out.println("Digite o nome da reserva: ");
-          nome_hospede = scan.next();
-          for (Reserva a : reservas) {
-            if (a.getNome_hospede().equals(nome_hospede)) {
-              System.out.println("Reserva:");
-              a.printar_reserva();
-              System.out.println("Check-out feito com sucesso");
-              for (Quarto x : quartos) {
-                if (x.getNum_quarto() == a.getQuarto().getNum_quarto()) {
-                  x.mudar_livre();
-                }
-              }
-            }
-          }
+
         }
       }
     }

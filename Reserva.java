@@ -2,28 +2,33 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class Reserva {
-  private String nome_hospede;
+  private Hospede hospede;
   private LocalDate checkin, checkout;
   private Quarto reservado;
   private double total;
+  private int status; // 0 = aguardando check-in, 1 = check-in, 2 = check-out, 3 = cancelada, 4 = atrasadas
 
-  Reserva(String nome_hospede, LocalDate checkin, LocalDate checkout, Quarto reservado) {
-    this.nome_hospede = nome_hospede;
+  Reserva(Hospede hospede, LocalDate checkin, LocalDate checkout, Quarto reservado) {
+    this.hospede = hospede;
     this.checkin = checkin;
     this.checkout = checkout;
     this.reservado = reservado;
+    this.status = 0;
     if (checkout.isEqual(checkin))
       this.total = reservado.getPreco();
     else
       this.total = reservado.getPreco() * (checkout.toEpochDay() - checkin.toEpochDay());
   }
 
-  public String getNome_hospede() {
-    return nome_hospede;
+    public Reserva() {
+    }
+
+  public Hospede getHospede() {
+    return hospede;
   }
 
-  public void setNome_hospede(String nome_hospede) {
-    this.nome_hospede = nome_hospede;
+  public void setHospede(Hospede hospede) {
+    this.hospede = hospede;
   }
 
   public LocalDate getCheckout() {
@@ -60,14 +65,30 @@ public class Reserva {
 
   public void printar_reserva() {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    System.out.println("\nNome do hospede: " + nome_hospede);
+    System.out.println("-------- RESERVA --------");
+    System.out.println("Nome do hospede: " + hospede.getNome());
     System.out.println("Periodo: ");
     System.out.println(checkin.format(formatter) + " - "
         + checkout.format(formatter));
-
-    System.out.println("Quarto reservado:");
     reservado.printar_quarto();
     System.out.println("Total: R$" + total);
+      switch (status) {
+          case 0 -> System.out.println("Status: Aguardando check-in.");
+          case 1 -> System.out.println("Status: Check-in.");
+          case 2 -> System.out.println("Status: Check-out.");
+          case 3 -> System.out.println("Status: Cancelada.");
+          case 4 -> System.out.println("Status: Atrasada.");
+          default -> {
+          }
+      }
   }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
 }
