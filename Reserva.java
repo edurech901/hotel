@@ -74,8 +74,8 @@ public class Reserva {
     System.out.println("Total: R$" + total);
       switch (status) {
           case 0 -> System.out.println("Status: Aguardando check-in.");
-          case 1 -> System.out.println("Status: Check-in.");
-          case 2 -> System.out.println("Status: Check-out.");
+          case 1 -> System.out.println("Status: Check-in realizado");
+          case 2 -> System.out.println("Status: Check-out realizado.");
           case 3 -> System.out.println("Status: Cancelada.");
           case 4 -> System.out.println("Status: Atrasada.");
           default -> {

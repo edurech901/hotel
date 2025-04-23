@@ -17,12 +17,14 @@ public class Hotel {
     return quartos;
   }
 
-  public static boolean encontrar_num_quarto(List<Quarto> quartos, int num_quarto) {
-    for (Quarto a : quartos) {
-      if (num_quarto == a.getNum_quarto())
-        return true;
+  public static int escolher_num_quarto(List<Quarto> quartos_livres, int andar) {
+    int maior_quarto = andar * 100;
+    for (Quarto a : quartos_livres) {
+      if (a.getNum_quarto() / 100 == andar) {
+        maior_quarto = a.getNum_quarto();
+      }
     }
-    return false;
+    return maior_quarto + 1;
   }
 
   public static LocalDate formata_data(String dataStr) {
@@ -108,6 +110,18 @@ public class Hotel {
     return null;
   }
 
+  public static boolean validarCPF(String cpf) {
+    return cpf.matches("^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$");
+  }
+
+  public static boolean validarTelefone(String tel) {
+    return tel.matches("^\\(?\\d{2}\\)?\\s?9?\\d{4}-\\d{4}$");
+  }
+
+  public static boolean validarEmail(String email) {
+    return email.matches("^[\\w.-]+@[\\w-]+\\.[a-zA-Z]{2,}$");
+  }
+
   public static void main(String[] args) {
 
     List<Quarto> quartos = quartos();
@@ -132,7 +146,7 @@ public class Hotel {
         System.err.println("Opção inválida!");
         continue;
       }
-      OUTER: switch (op) {
+      switch (op) {
         default ->
           System.err.println("Opção inválida!");
         case 0 -> {
@@ -140,21 +154,32 @@ public class Hotel {
           return;
         }
         case 1 -> {
-          int num_quarto, tipo_quarto;
-          System.out.println("Digite o numero do quarto:");
-          num_quarto = scan.nextInt();
-          if (encontrar_num_quarto(quartos, num_quarto)) {
-            System.out.println("Numero de quarto ja existe");
-            break;
+          int andar_quarto, num_quarto, tipo_quarto;
+          System.out.println("Digite o andar do quarto:");
+
+          try {
+            andar_quarto = scan.nextInt();
+          } catch (Exception e) {
+            System.err.println("Andar inválido!");
+            continue;
           }
-          System.out.println("Digite o codigo do tipo do quarto:");
-          tipo_quarto = scan.nextInt();
+          num_quarto = escolher_num_quarto(quartos, andar_quarto);
+          System.out.println("Escolha o tipo do quarto:");
+          try {
+            System.out.println("1 - Solteiro - Diaria: R$200,00");
+            System.out.println("2 - Casal - Diaria: R$350,00");
+            System.out.println("3 - Casal e Solteiro - Diaria: R$500,00");
+            tipo_quarto = scan.nextInt();
+          } catch (Exception e) {
+            System.err.println("Tipo de quarto inválido!");
+            continue;
+          }
           if (tipo_quarto < 1 || tipo_quarto > 3) {
             System.out.println("Código de tipo de quarto invalido");
             break;
           }
           quartos.add(new Quarto(num_quarto, tipo_quarto));
-          System.err.println("Quarto cadastrado com sucesso");
+          System.out.println("Quarto cadastrado com sucesso");
         }
         case 2 -> {
           for (Quarto quarto : quartos) {
@@ -168,12 +193,15 @@ public class Hotel {
           LocalDate checkin, checkout;
           System.out.println("Digite o nome da reserva: ");
           List<Quarto> quartos_livres;
-          nome_hospede = scan.next();
+          scan.nextLine(); // usado para resolver o problema da quebra de linha
+          nome_hospede = scan.nextLine();
           Hospede hospede = new Hospede(nome_hospede);
           while (true) {
             System.out.println("Digite a data do check-in: ");
             dataStr = scan.next();
             checkin = formata_data(dataStr);
+            if (checkin == null)
+              continue;
             if (checkin.isBefore(LocalDate.now())) {
               System.out.println("Check-in não pode ser em data passada.");
               continue;
@@ -222,6 +250,64 @@ public class Hotel {
           }
         }
         case 5 -> {
+          String nome_hospede, cpf, tel, email;
+          System.out.println("Digite o nome da reserva: ");
+          nome_hospede = scan.next();
+          Reserva reserva = buscar_reserva_hoje(reservas, nome_hospede);
+          if (reserva == null) {
+            System.out.println("Reserva não encontrada.");
+            break;
+          }
+          Hospede hospede = reserva.getHospede(); // pega o real
+          if (!hospede.getCadastrado()) {
+            System.out.println("Finalize o cadastro:");
+            while (true) {
+              System.out.print("CPF (formato 000.000.000-00): ");
+              cpf = scan.next();
+              if (validarCPF(cpf))
+                break;
+              System.out.println("CPF inválido!");
+            }
+
+            // Telefone
+            while (true) {
+              System.out.print("Telefone (formato (99)99999-9999): ");
+              tel = scan.next();
+              if (validarTelefone(tel))
+                break;
+              System.out.println("Telefone inválido!");
+            }
+
+            // Email
+            while (true) {
+              System.out.print("Email: ");
+              email = scan.next();
+              if (validarEmail(email))
+                break;
+              System.out.println("Email inválido!");
+            }
+
+            hospede.finalizar_cadastro(cpf, tel, email);
+            System.out.println("Cadastro finalizado!");
+          } else {
+            System.out.println("Hospede ja cadastrado");
+            hospede.printar_hospede();
+          }
+          System.out.println("Deseja realizar o check-in? (S/N)");
+          String check = scan.next();
+          switch (check.toUpperCase()) {
+            case "S" -> {
+              reserva.setStatus(1);
+              System.out.println("Check-in realizado com sucesso");
+              System.out.println("Quarto: " + reserva.getQuarto().getNum_quarto());
+            }
+            case "N" -> {
+              break;
+            }
+            default -> System.out.println("Opção inválida");
+          }
+        }
+        case 6 -> {
           String nome_hospede;
           System.out.println("Digite o nome da reserva: ");
           nome_hospede = scan.next();
@@ -242,27 +328,23 @@ public class Hotel {
 
             hospede.finalizar_cadastro(cpf, tel, email);
             System.out.println("Cadastro finalizado!");
-          }
-          else {
+          } else {
             System.out.println("Hospede ja cadastrado");
             hospede.printar_hospede();
           }
-          System.out.println("Deseja realizar o check-in? (S/N)");
+          System.out.println("Deseja realizar o check-out? (S/N)");
           String check = scan.next();
           switch (check.toUpperCase()) {
             case "S" -> {
               reserva.setStatus(1);
-              System.out.println("Check-in realizado com sucesso");
+              System.out.println("Check-out realizado com sucesso");
               System.out.println("Quarto: " + reserva.getQuarto().getNum_quarto());
             }
             case "N" -> {
-              break OUTER;
+              break;
             }
             default -> System.out.println("Opção inválida");
           }
-        }
-        case 6 -> {
-
         }
       }
     }
