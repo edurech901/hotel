@@ -156,7 +156,6 @@ public class Hotel {
         case 1 -> {
           int andar_quarto, num_quarto, tipo_quarto;
           System.out.println("Digite o andar do quarto:");
-
           try {
             andar_quarto = scan.nextInt();
           } catch (Exception e) {
@@ -258,7 +257,7 @@ public class Hotel {
             System.out.println("Reserva não encontrada.");
             break;
           }
-          Hospede hospede = reserva.getHospede(); // pega o real
+          Hospede hospede = reserva.getHospede();
           if (!hospede.getCadastrado()) {
             System.out.println("Finalize o cadastro:");
             while (true) {
@@ -268,8 +267,6 @@ public class Hotel {
                 break;
               System.out.println("CPF inválido!");
             }
-
-            // Telefone
             while (true) {
               System.out.print("Telefone (formato (99)99999-9999): ");
               tel = scan.next();
@@ -277,8 +274,6 @@ public class Hotel {
                 break;
               System.out.println("Telefone inválido!");
             }
-
-            // Email
             while (true) {
               System.out.print("Email: ");
               email = scan.next();
@@ -286,7 +281,6 @@ public class Hotel {
                 break;
               System.out.println("Email inválido!");
             }
-
             hospede.finalizar_cadastro(cpf, tel, email);
             System.out.println("Cadastro finalizado!");
           } else {
@@ -308,24 +302,38 @@ public class Hotel {
           }
         }
         case 6 -> {
-          String nome_hospede;
+          String nome_hospede, cpf, tel, email;
           System.out.println("Digite o nome da reserva: ");
           nome_hospede = scan.next();
           Reserva reserva = buscar_reserva_hoje(reservas, nome_hospede);
-          if (reserva == null) {
-            System.out.println("Reserva não encontrada.");
+          if (reserva.getStatus() != 1){
+            System.out.println("Check-in não realizado.");
             break;
           }
-          Hospede hospede = reserva.getHospede(); // pega o real
+          Hospede hospede = reserva.getHospede();
           if (!hospede.getCadastrado()) {
             System.out.println("Finalize o cadastro:");
-            System.out.print("CPF: ");
-            String cpf = scan.next();
-            System.out.print("Telefone: ");
-            String tel = scan.next();
-            System.out.print("Email: ");
-            String email = scan.next();
-
+            while (true) {
+              System.out.print("CPF (formato 000.000.000-00): ");
+              cpf = scan.next();
+              if (validarCPF(cpf))
+                break;
+              System.out.println("CPF inválido!");
+            }
+            while (true) {
+              System.out.print("Telefone (formato (99)99999-9999): ");
+              tel = scan.next();
+              if (validarTelefone(tel))
+                break;
+              System.out.println("Telefone inválido!");
+            }
+            while (true) {
+              System.out.print("Email: ");
+              email = scan.next();
+              if (validarEmail(email))
+                break;
+              System.out.println("Email inválido!");
+            }
             hospede.finalizar_cadastro(cpf, tel, email);
             System.out.println("Cadastro finalizado!");
           } else {
@@ -336,7 +344,7 @@ public class Hotel {
           String check = scan.next();
           switch (check.toUpperCase()) {
             case "S" -> {
-              reserva.setStatus(1);
+              reserva.setStatus(2);
               System.out.println("Check-out realizado com sucesso");
               System.out.println("Quarto: " + reserva.getQuarto().getNum_quarto());
             }
